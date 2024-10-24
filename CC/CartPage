@@ -1,0 +1,176 @@
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import './CartPage.css';
+
+const CartPage = () => {
+  const [cartItems, setCartItems] = useState([]);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+      setCartItems(JSON.parse(savedCart));
+    }
+  }, []);
+
+  useEffect(() => {
+    const newTotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    setTotal(newTotal);
+  }, [cartItems]);
+
+  const updateQuantity = (id, newQuantity) => {
+    setCartItems(cartItems.map(item => 
+      item.id === id ? { ...item, quantity: Math.max(0, newQuantity) } : item
+    ));
+  };
+
+  const removeItem = (id) => {
+    setCartItems(cartItems.filter(item => item.id !== id));
+  };
+
+  const handlePayment = () => {
+    alert('Payment Successful!');
+    setCartItems([]);
+    localStorage.removeItem('cart');
+  };
+
+  return (
+    <div className="cart-container">
+      <nav className="navbar">
+        <ul>
+          <li><Link to="/shop">Continue Shopping</Link></li>
+          <li><Link to="/home">Home</Link></li>
+          <li><Link to="/">Logout</Link></li>
+        </ul>
+      </nav>
+
+      <h1 className="page-title">Your Cart</h1>
+
+      {cartItems.length === 0 ? (
+        <p className="empty-cart-message">Your cart is empty. <Link to="/shop">Continue shopping</Link></p>
+      ) : (
+        <div className="cart-items">
+          {cartItems.map((item) => (
+            <div key={item.id} className="cart-item">
+              <img src={item.image} alt={item.name} className="item-image" />
+              <div className="item-details">
+                <h3 className="item-name">{item.name}</h3>
+                <p className="item-price">${item.price.toFixed(2)}</p>
+                <div className="quantity-control">
+                  <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
+                  <span>{item.quantity}</span>
+                  <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                </div>
+                <button className="remove-btn" onClick={() => removeItem(item.id)}>Remove</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="cart-summary">
+        <h2>Total: ${total.toFixed(2)}</h2>
+
+        <button className="checkout-btn" onClick={handlePayment} disabled={cartItems.length === 0}>Pay Now</button>
+      </div>
+    </div>
+  );
+};
+
+export default CartPage;
+  .cart-container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .navbar ul {
+    display: flex;
+    justify-content: space-around;
+    list-style-type: none;
+    padding: 0px;
+  }
+  
+  .navbar a {
+    text-decoration: none;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .page-title {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .cart-item {
+    display: flex;
+    align-items: center;
+    gap: 0px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .item-image {
+    width: 165px;
+    height: 165px;
+  }
+  
+  .item-details {
+    flex: 1;
+  }
+  
+  .item-name {
+    font-size: 20px;
+  }
+  
+  .item-price {
+    font-size: 18px;
+    color: #555;
+  }
+  
+  .quantity-control button {
+    padding: 10px 5px;
+    font-size: 16px;
+    width: 50px;
+  }
+  
+  .quantity-control span {
+    margin: 0 10px;
+  }
+  
+  .remove-btn {
+    background-color: #f9f8f8;
+    border: none;
+    padding: 5px 10px;
+    color: black;
+    cursor: pointer;
+    width: 150px;
+  }
+  
+  .cart-summary {
+    text-align: center;
+    margin-top: 20px;
+
+  }
+  
+  .checkout-btn {
+    padding: 10px 20px;
+    background-color: #15ae15;
+    color: black;
+    border: none;
+    cursor: pointer;
+    width: 150px;
+  }
+  
+  .checkout-btn:disabled {
+    background-color: #15ae15;
+    cursor: not-allowed;
+  }
+  
