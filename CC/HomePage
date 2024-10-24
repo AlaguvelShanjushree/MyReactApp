@@ -1,0 +1,147 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './Home.css';
+
+const HomePage = () => {
+  return (
+    <div className="home-container">
+      <nav className="navbar">
+        <ul>
+          <li><Link to="/home">Home</Link></li>
+          <li><Link to="/">Login</Link></li>
+          <li><Link to="/signup">Sign Up</Link></li>
+        </ul>
+      </nav>
+
+      <header className="hero">
+        <h1>Welcome to the Gift Shop!</h1>
+        <p>Find the perfect customized gifts for your loved ones.</p>
+        <Link to="/shop" className="shop-now-btn">Shop Now</Link>
+      </header>
+
+      <section className="featured-products">
+        <h2>Featured Products</h2>
+        <div className="product-list">
+          <div className="product-item">Customized Mug</div>
+          <div className="product-item">Personalized T-Shirt</div>
+          <div className="product-item">Engraved Necklace</div>
+        </div>
+      </section>
+
+      <section className="categories">
+        <h2>Shop by Categories</h2>
+        <div className="category-list">
+          <div className="category-item">Mugs</div>
+          <div className="category-item">Apparel</div>
+          <div className="category-item">Jewelry</div>
+          <div className="category-item">Home Decor</div>
+        </div>
+      </section>
+
+      <footer className="footer">
+        <p>&copy; 2024 Gift Shop. All rights reserved.</p>
+      </footer>
+    </div>
+  );
+};
+
+export default HomePage;
+body {
+  background: url(https://www.shutterstock.com/image-vector/love-concept-pink-background-shop-260nw-1901304301.jpg);
+  background-size: 1050px;
+
+}
+/* .home-container {
+  text-align: center;
+  width: 100%;
+  background-size: cover;
+  color: white;
+}
+
+.navbar {
+  background-color: rgba(233, 30, 99, 0.8);
+  padding: 10px;
+  color: white;
+}
+
+.navbar ul {
+  background-color: #e91e63;
+  list-style: none;
+  padding: 100px;
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin: 0px 0px  ;
+}
+
+.navbar li {
+  background-color: #e91e63;
+  padding: 10px;
+  display: inline;
+}
+
+.navbar a {
+  color: black;
+  text-decoration: none;
+}
+
+.navbar a:hover {
+  text-decoration: underline;
+}
+
+.hero {
+  background-size: cover; 
+  background-position: center;
+  color: black;
+  height: 100;
+}*/
+
+.hero h1 {
+  font-size: 2.5em;
+} 
+
+.hero p {
+  font-size: 1.2em;
+}
+
+.shop-now-btn {
+  cursor: pointer;
+  padding: 10px 20px;
+  background-color: #e91e63;
+  color: white;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.featured-products, .categories {
+  padding: 20px;
+  background-color: rgb(254, 236, 236);
+  margin: 20px auto;
+  border-radius: 10px;
+  width: 40%;
+}
+
+.product-list, .category-list {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.product-item, .category-item {
+  background-color: #e91e63;
+  color: white;
+  padding: 10px 30px;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+/* .shop-now-btn:hover {
+  background-color: #e91e63;
+  color: white;
+}
+
+.footer {
+  padding: 10px;
+  color: black;
+  text-align: center;
+} */
