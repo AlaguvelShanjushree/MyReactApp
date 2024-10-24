@@ -1,0 +1,322 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Payment.css';
+
+const PaymentPage = ({ total = 0 }) => {
+  const navigate = useNavigate();
+  const [paymentDetails, setPaymentDetails] = useState({
+    cardNumber: '',
+    cardHolder: '',
+    expiryDate: '',
+    cvv: '',
+    address: '',
+    city: '',
+    zipCode: '',
+  });
+  const [error, setError] = useState('');
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    let formattedValue = value;
+
+    // Format card number with spaces every 4 digits
+    if (name === 'cardNumber') {
+      formattedValue = value.replace(/\s/g, '')
+                           .replace(/(\d{4})/g, '$1 ')
+                           .trim()
+                           .slice(0, 19);
+    }
+    
+    // Format expiry date (MM/YY)
+    if (name === 'expiryDate') {
+      formattedValue = value.replace(/\D/g, '')
+                           .replace(/^(\d{2})/, '$1/')
+                           .slice(0, 5);
+    }
+
+    // Limit CVV to 3-4 digits
+    if (name === 'cvv') {
+      formattedValue = value.slice(0, 4).replace(/\D/g, '');
+    }
+
+    setPaymentDetails(prev => ({
+      ...prev,
+      [name]: formattedValue
+    }));
+  };
+
+  const validateForm = () => {
+    if (!paymentDetails.cardNumber || paymentDetails.cardNumber.replace(/\s/g, '').length < 16) {
+      setError('Please enter a valid card number');
+      return false;
+    }
+    if (!paymentDetails.cardHolder) {
+      setError('Please enter the cardholder name');
+      return false;
+    }
+    if (!paymentDetails.expiryDate || !paymentDetails.expiryDate.match(/^\d{2}\/\d{2}$/)) {
+      setError('Please enter a valid expiry date (MM/YY)');
+      return false;
+    }
+    if (!paymentDetails.cvv || paymentDetails.cvv.length < 3) {
+      setError('Please enter a valid CVV');
+      return false;
+    }
+    if (!paymentDetails.address || !paymentDetails.city || !paymentDetails.zipCode) {
+      setError('Please fill in all address fields');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (validateForm()) {
+      localStorage.removeItem('cart');
+      navigate('/payment-success');
+    }
+  };
+
+  return (
+    <div className="payment-container">
+      <div className="payment-card">
+        <h1 className="payment-title">Payment Details</h1>
+        <p className="payment-total">Total Amount: ${total.toFixed(2)}</p>
+        
+        <form onSubmit={handleSubmit} className="payment-form">
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
+          
+          <div className="form-group">
+            <label htmlFor="cardNumber">Card Number</label>
+            <input
+              type="text"
+              id="cardNumber"
+              name="cardNumber"
+              value={paymentDetails.cardNumber}
+              onChange={handleInputChange}
+              placeholder="1234 5678 9012 3456"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="cardHolder">Cardholder Name</label>
+            <input
+              type="text"
+              id="cardHolder"
+              name="cardHolder"
+              value={paymentDetails.cardHolder}
+              onChange={handleInputChange}
+              placeholder="John Doe"
+            />
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="expiryDate">Expiry Date</label>
+              <input
+                type="text"
+                id="expiryDate"
+                name="expiryDate"
+                value={paymentDetails.expiryDate}
+                onChange={handleInputChange}
+                placeholder="MM/YY"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="cvv">CVV</label>
+              <input
+                type="password"
+                id="cvv"
+                name="cvv"
+                value={paymentDetails.cvv}
+                onChange={handleInputChange}
+                placeholder="123"
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="address">Billing Address</label>
+            <input
+              type="text"
+              id="address"
+              name="address"
+              value={paymentDetails.address}
+              onChange={handleInputChange}
+              placeholder="123 Main St"
+            />
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="city">City</label>
+              <input
+                type="text"
+                id="city"
+                name="city"
+                value={paymentDetails.city}
+                onChange={handleInputChange}
+                placeholder="City"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="zipCode">ZIP Code</label>
+              <input
+                type="text"
+                id="zipCode"
+                name="zipCode"
+                value={paymentDetails.zipCode}
+                onChange={handleInputChange}
+                placeholder="12345"
+              />
+            </div>
+          </div>
+
+          <div className="button-group">
+            <button
+              type="button"
+              className="back-button"
+              onClick={() => navigate('/cart')}
+            >
+              Back to Cart
+            </button>
+            <button type="submit" className="pay-button">
+              Pay ${total.toFixed(2)}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default PaymentPage;
+.payment-container {
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  
+  .payment-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .payment-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .payment-total {
+    color: #666;
+    margin-bottom: 1.5rem;
+  }
+  
+  .payment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  
+  label {
+    font-weight: 500;
+    color: #333;
+  }
+  
+  input {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+  
+  .error-message {
+    background-color: #fff3f3;
+    color: #dc3545;
+    padding: 0.75rem;
+    border-radius: 4px;
+    border: 1px solid #ffcdd2;
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .back-button {
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #ddd;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .pay-button {
+    padding: 0.75rem 1.5rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .pay-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .back-button:hover {
+    background-color: #f5f5f5;
+  }
+  
+  @media (max-width: 600px) {
+    .payment-container {
+      padding: 1rem;
+    }
+    
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+    
+    .button-group {
+      flex-direction: column;
+    }
+    
+    .back-button,
+    .pay-button {
+      width: 100%;
+    }
+  }
