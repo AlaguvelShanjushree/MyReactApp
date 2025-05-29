@@ -1,6 +1,68 @@
+.form-container {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  margin: 100px auto;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  color: #e91e63;
+  margin-bottom: 20px;
+}
+
+input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #e91e63;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #c2185b;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-align: left;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+  display: block;
+  margin-top: 15px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import './Login.css';
+import './LoginPage.css';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -13,9 +75,14 @@ const LoginPage = () => {
     if (!username || !password) {
       setErrorMessage('Both fields are required.');
     } else {
-      setErrorMessage('');
-      if (username === 'shanju' && password === '123') {
+      const storedUser = JSON.parse(localStorage.getItem('giftshopUser'));
+      if (
+        storedUser &&
+        storedUser.username === username &&
+        storedUser.password === password
+      ) {
         alert('Login successful!');
+        setErrorMessage('');
         navigate('/home');
       } else {
         setErrorMessage('Invalid username or password.');
@@ -38,55 +105,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-.form-container {
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 300px;
-  margin: auto;
-}
-
-h2 {
-
-  color: #e91e63;
-  margin-bottom: 20px;
-}
-
-input {
-  width: calc(100% - 20px);
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-button {
-  width: 10%;
-  padding: 100px;
-  background-color: #e91e63;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #c2185b;
-}
-
-error-message {
-  color: red;
-  margin-bottom: 10px;
-}
-
-a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
